@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>i18next-analyser</title>
+  <link rel="stylesheet" href="flag-icons.min.css">
+  <style>
+    html, body {
+      width: 100%;
+      margin: 0;
+      background: #fff;
+      font-family: sans-serif;
+      font-size: 11px;
+    }
+
+    table {
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    table th, table td {
+      padding: 0.25rem 0.75rem;
+    }
+
+    table tr td:first-of-type {
+      padding-right: 0;
+    }
+
+    .text-muted {
+      opacity: 50%;
+    }
+
+    .progress {
+      width: 128px;
+      height: 8px;
+      border-radius: 3px;
+      background: #ccc;
+    }
+
+    .progress .progress-inner {
+      background: #4b4;
+      height: 8px;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+  <table id="data">
+    <thead>
+      <tr>
+        <th colspan="2">Language</th>
+        <th>Keys</th>
+        <th>Missing</th>
+        <th>Progress</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const tbody = document.querySelector("#data tbody");
+    
+    function addLanguage(lang, keys, rootKeys, missing) {
+      const tr = document.createElement("tr");
+      
+      // Country flag (if available)
+      const flagTD = document.createElement("td");
+      const flag = document.createElement("span");
+      flag.classList.add("flag-icons", lang.country.toUpperCase());
+      flagTD.appendChild(flag);
+      tr.appendChild(flagTD);
+      
+      // Language name
+      const nameTD = document.createElement("td");
+      nameTD.textContent = lang.name;
+      if (lang.nativeName) { // Native name (if available)
+        const nativeName = document.createElement("span");
+        nativeName.classList.add("text-muted");
+        nativeName.textContent = ` (${lang.nativeName})`;
+        nameTD.appendChild(nativeName);
+      }
+      tr.appendChild(nameTD);
+      
+      // Keys count
+      const keysTD = document.createElement("td");
+      keysTD.textContent = keys.toLocaleString();
+      tr.appendChild(keysTD);
+
+      // Missing count
+      const missingTD = document.createElement("td");
+      missingTD.textContent = missing.toLocaleString();
+      tr.appendChild(missingTD);
+
+      // Progress bar
+      const progressTD = document.createElement("td");
+      const progressContainer = document.createElement("div");
+      progressContainer.classList.add("progress");
+      const progressAmount = (keys / rootKeys) * 100;
+      const progress = document.createElement("div");
+      progress.classList.add("progress-inner");
+      progress.style.width = `${progressAmount}%`;
+      progressContainer.appendChild(progress);
+      progressTD.appendChild(progressContainer);
+      tr.appendChild(progressTD);
+
+      tbody.append(tr);
+    }
+
+    addLanguage({
+      "name": "Vietnamese",
+      "nativeName": "Tiếng Việt",
+      "country": "vn"
+    }, 50, 250, 0);
+  </script>
+</body>
+</html>
